@@ -11,7 +11,7 @@ func main() {
 	http.HandleFunc("/index", handlerIndex)
 	http.HandleFunc("/hello", handlerHello)
 
-	err := http.ListenAndServe(":9000", nil)
+	err := http.ListenAndServe("", nil)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
