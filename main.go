@@ -18,6 +18,8 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
+	fmt.Println(port)
 }
 
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
