@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 )
 
 func main() {
 
-	port := os.Getenv("PORT")
+	port := "8080"
 
 	http.HandleFunc("/", handlerIndex)
 	http.HandleFunc("/index", handlerIndex)
