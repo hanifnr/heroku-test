@@ -18,7 +18,7 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Println(port)
+	fmt.Printf("listening to port %s", port)
 }
 
 func handlerIndex(w http.ResponseWriter, r *http.Request) {
