@@ -1,8 +1,4 @@
 runtime: go116
-env: standard
-handlers:
-- url: /.*
-  script: _go_app
 env_variables:
   INSTANCE_UNIX_SOCKET: true-kite-361808:us-central1:pg-sample
   DB_USER: admin
