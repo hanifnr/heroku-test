@@ -24,6 +24,7 @@ func GetDB() *gorm.DB {
 		dbName         = mustGetenv("DB_NAME")              // e.g. 'my-database'
 		unixSocketPath = mustGetenv("INSTANCE_UNIX_SOCKET") // e.g. '/cloudsql/project:region:instance'
 	)
+	fmt.Printf("pg info %s %s %s %s", dbUser, dbPwd, dbName, unixSocketPath)
 	dbURI := fmt.Sprintf("%s:%s@unix(/%s)/%s?parseTime=true",
 		dbUser, dbPwd, unixSocketPath, dbName)
 	db, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
