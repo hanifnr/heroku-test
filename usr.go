@@ -1,4 +1,4 @@
-package models
+package main
 
 type Usr struct {
 	Id   int64  `json:"id"`
