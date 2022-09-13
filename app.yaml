@@ -1,4 +1,4 @@
-runtime: go117
+runtime: go1.17
 env: standard
 handlers:
 - url: /.*
