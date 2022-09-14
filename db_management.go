@@ -6,11 +6,10 @@ import (
 	"os"
 	"time"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"database/sql"
 )
 
-func GetDB() *gorm.DB {
+func GetDB() *sql.DB {
 	mustGetenv := func(k string) string {
 		v := os.Getenv(k)
 		if v == "" {
@@ -27,17 +26,14 @@ func GetDB() *gorm.DB {
 	fmt.Printf("pg info %s %s %s %s", dbUser, dbPwd, dbName, unixSocketPath)
 	dbURI := fmt.Sprintf("%s:%s@unix(/%s)/%s?parseTime=true",
 		dbUser, dbPwd, unixSocketPath, dbName)
-	db, err := gorm.Open(postgres.Open(dbURI), &gorm.Config{})
+	dbPool, _ := sql.Open("pgx", dbURI)
 
-	if err != nil {
-		fmt.Printf("Error open connection: %s", err.Error())
-	}
+	// [START_EXCLUDE]
+	dbPool.SetMaxIdleConns(10)
+	dbPool.SetMaxOpenConns(100)
+	dbPool.SetConnMaxLifetime(time.Hour)
+	dbPool.SetConnMaxIdleTime(10 * time.Minute)
+	// [END_EXCLUDE]
 
-	sqlDB, _ := db.DB()
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
-	sqlDB.SetConnMaxLifetime(time.Hour)
-	sqlDB.SetConnMaxIdleTime(10 * time.Minute)
-
-	return db
+	return dbPool
 }

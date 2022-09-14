@@ -1,9 +1,16 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
+)
+
+var (
+	db   *sql.DB
+	once sync.Once
 )
 
 func main() {
@@ -34,9 +41,31 @@ func handlerHello(w http.ResponseWriter, r *http.Request) {
 }
 
 func listUsr(w http.ResponseWriter, r *http.Request) {
-	db := GetDB()
-	usr := make([]*Usr, 0)
-	db.Find(&usr)
+	rows, err := db.Query("SELECT * FROM votes ORDER BY created_at DESC LIMIT 5")
+	if err != nil {
+		fmt.Errorf("DB.Query: %v", err)
+	}
+	defer rows.Close()
+
+	var usr []Usr
+	for rows.Next() {
+		var (
+			id   int64
+			name string
+		)
+		err := rows.Scan(&id, &name)
+		if err != nil {
+			fmt.Errorf("Rows.Scan: %v", err)
+		}
+		usr = append(usr, Usr{Id: id, Name: name})
+	}
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(usr)
+}
+
+func getDB() *sql.DB {
+	once.Do(func() {
+		db = GetDB()
+	})
+	return db
 }
