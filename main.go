@@ -41,9 +41,10 @@ func handlerHello(w http.ResponseWriter, r *http.Request) {
 }
 
 func listUsr(w http.ResponseWriter, r *http.Request) {
+	db = getDB()
 	rows, err := db.Query("SELECT * FROM votes ORDER BY created_at DESC LIMIT 5")
 	if err != nil {
-		fmt.Errorf("DB.Query: %v", err)
+		fmt.Printf("DB.Query: %v", err)
 	}
 	defer rows.Close()
 
@@ -55,7 +56,7 @@ func listUsr(w http.ResponseWriter, r *http.Request) {
 		)
 		err := rows.Scan(&id, &name)
 		if err != nil {
-			fmt.Errorf("Rows.Scan: %v", err)
+			fmt.Printf("Rows.Scan: %v", err)
 		}
 		usr = append(usr, Usr{Id: id, Name: name})
 	}
