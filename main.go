@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	m "testgo11/models"
+	u "testgo11/utils"
 )
 
 var (
@@ -48,7 +50,7 @@ func listUsr(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	var usr []Usr
+	usr := make([]*m.Usr, 0)
 	for rows.Next() {
 		var (
 			id   int64
@@ -58,7 +60,7 @@ func listUsr(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Printf("Rows.Scan: %v", err)
 		}
-		usr = append(usr, Usr{Id: id, Name: name})
+		usr = append(usr, &m.Usr{Id: id, Name: name})
 	}
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(usr)
@@ -66,7 +68,7 @@ func listUsr(w http.ResponseWriter, r *http.Request) {
 
 func getDB() *sql.DB {
 	once.Do(func() {
-		db = GetDB()
+		db = u.GetDB()
 	})
 	return db
 }
