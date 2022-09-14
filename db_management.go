@@ -26,7 +26,10 @@ func GetDB() *sql.DB {
 	fmt.Printf("pg info %s %s %s %s", dbUser, dbPwd, dbName, unixSocketPath)
 	dbURI := fmt.Sprintf("%s:%s@unix(/%s)/%s?parseTime=true",
 		dbUser, dbPwd, unixSocketPath, dbName)
-	dbPool, _ := sql.Open("pgx", dbURI)
+	dbPool, err := sql.Open("pgx", dbURI)
+	if err != nil {
+		fmt.Printf("sql.Open: %v", err)
+	}
 
 	// [START_EXCLUDE]
 	dbPool.SetMaxIdleConns(10)
