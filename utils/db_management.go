@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"database/sql"
+
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 func GetDB() *sql.DB {
@@ -24,8 +26,9 @@ func GetDB() *sql.DB {
 		unixSocketPath = mustGetenv("INSTANCE_UNIX_SOCKET") // e.g. '/cloudsql/project:region:instance'
 	)
 	fmt.Printf("pg info %s %s %s %s", dbUser, dbPwd, dbName, unixSocketPath)
-	dbURI := fmt.Sprintf("%s:%s@unix(/%s)/%s?parseTime=true",
-		dbUser, dbPwd, unixSocketPath, dbName)
+	dbURI := fmt.Sprintf("user=%s password=%s database=%s host=%s",
+		dbUser, dbPwd, dbName, unixSocketPath)
+
 	dbPool, err := sql.Open("pgx", dbURI)
 	if err != nil {
 		fmt.Printf("sql.Open: %v", err)
