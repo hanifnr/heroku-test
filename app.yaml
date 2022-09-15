@@ -4,3 +4,4 @@ env_variables:
   DB_USER: admin
   DB_PASS: admin
   DB_NAME: db-sample
+  APP_PORT: 8080

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"sync"
 	m "testgo11/models"
 	u "testgo11/utils"
@@ -17,7 +18,7 @@ var (
 
 func main() {
 
-	port := "8080"
+	port := os.Getenv("APP_PORT")
 
 	http.HandleFunc("/", handlerIndex)
 	http.HandleFunc("/index", handlerIndex)
