@@ -1,6 +1,6 @@
 runtime: go116
 env_variables:
-  INSTANCE_UNIX_SOCKET: true-kite-361808:us-central1:pg-sample
+  INSTANCE_UNIX_SOCKET: 34.69.105.228
   DB_USER: admin
   DB_PASS: admin
   DB_NAME: db-sample
