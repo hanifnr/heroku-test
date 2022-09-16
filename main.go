@@ -9,6 +9,8 @@ import (
 	"sync"
 	m "testgo11/models"
 	u "testgo11/utils"
+
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -17,15 +19,15 @@ var (
 )
 
 func main() {
-
 	port := os.Getenv("APP_PORT")
 
-	http.HandleFunc("/", handlerIndex)
-	http.HandleFunc("/index", handlerIndex)
-	http.HandleFunc("/hello", handlerHello)
-	http.HandleFunc("/usr", listUsr)
+	router := mux.NewRouter()
+	router.HandleFunc("/", handlerIndex)
+	router.HandleFunc("/index", handlerIndex)
+	router.HandleFunc("/hello", handlerHello)
+	router.HandleFunc("/usr", listUsr).Methods("GET")
 
-	err := http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe(":"+port, router)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
