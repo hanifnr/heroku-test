@@ -1,32 +1,37 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"sync"
+	c "testgo11/controllers"
 	m "testgo11/models"
 	u "testgo11/utils"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 var (
-	db   *sql.DB
+	db   *gorm.DB
 	once sync.Once
 )
 
 func main() {
 	port := os.Getenv("APP_PORT")
+	u.SetAuthSecret("1GN1T3CH")
+	u.SetNoAuth([]string{"/login"})
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", handlerIndex)
 	router.HandleFunc("/index", handlerIndex)
 	router.HandleFunc("/hello", handlerHello)
 	router.HandleFunc("/usr", listUsr).Methods("GET")
+	router.HandleFunc("/login", c.LoginController).Methods("POST")
 
+	router.Use(u.JwtAuthentication)
 	err := http.ListenAndServe(":"+port, router)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -47,29 +52,13 @@ func handlerHello(w http.ResponseWriter, r *http.Request) {
 
 func listUsr(w http.ResponseWriter, r *http.Request) {
 	db = getDB()
-	rows, err := db.Query("SELECT * FROM usr")
-	if err != nil {
-		fmt.Printf("DB.Query: %v", err)
-	}
-	defer rows.Close()
-
-	var usr []m.Usr
-	for rows.Next() {
-		var (
-			id   int64
-			name string
-		)
-		err := rows.Scan(&id, &name)
-		if err != nil {
-			fmt.Printf("Rows.Scan: %v", err)
-		}
-		usr = append(usr, m.Usr{Id: id, Name: name})
-	}
+	usr := make([]*m.Usr, 0)
+	db.Find(&usr)
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(usr)
 }
 
-func getDB() *sql.DB {
+func getDB() *gorm.DB {
 	once.Do(func() {
 		db = u.GetDB()
 	})
